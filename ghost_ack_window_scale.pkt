@@ -1,0 +1,30 @@
+// ------------Initialize server socket ---------- //
+
+0 socket(...,SOCK_STREAM,IPPROTO_TCP)=3
++0 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
++0 bind(3, ..., ...)=0
++0 listen(3,1)=0
+
+// ---------------------------------------------- //
+
+
+// ---------------- Handshake ------------------- //
+
++0 < S 0:0(0) win 65535 <mss 1000,nop,wscale 14>
++0 > S. 0:0(0) ack 1 <...>
++0 < . 1:1(0) ack 1 win 65535 <mss 1000,nop,wscale 14>
++0 accept(3, ..., ...)=4
+
+// ---------------------------------------------- //
+
+
+
+// ---------------- Sending Ghost Ack ----------- //
+
+// The behavior also applies to window scaling, when using wscale=14
+// we have the first acceptable ACK number
+// 1 - 65535 * (2^14) + 2^32 = 3221241857
+
+
++0 < . 1:11(10) ack 3221241857 win 65535
++0 read(4, ..., 4096)=10

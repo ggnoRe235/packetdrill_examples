@@ -1,0 +1,37 @@
+// ------------Initialize server socket --------- //
+
+0 socket(...,SOCK_STREAM,IPPROTO_TCP)=3
++0 setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
++0 bind(3, ..., ...)=0
++0 listen(3,1)=0
+
+// ---------------------------------------------- //
+
+
+
+// ---------------- Handshake ------------------- //
+
++0 < S 0:0(0) win 65535 <mss 1000>
++0 > S. 0:0(0) ack 1 <...>
++0 < . 1:1(0) ack 1 win 65535
++0 accept(3, ..., ...)=4
+
+// -------------------------
+
+
+// ---------------- Sending Ghost Ack ----------- //
+
+// For systems that implmented RFC 5961 mitigations, it would accept
+// ((SND.UNA – MAX.SND.WND) =< SEG.ACK =< SND.NXT)
+// For this experiment, we use a window of 65535
+// Thus, the first acceptable ACK number should be:
+// 1 - 65535 + 2^32 = 4294901762
+
+// In the following, we send an ack packet acknowledging the first acceptable ACK number 4294901762
+// the server would accept the 10 bytes sent in the ACK packet.
+// Since the connection is newly established, and the server have not sent any information,
+// the ACK segment acknowledging never sent data is accepted.
+
++0 < . 1:11(10) ack 4294901762 win 65535
++0 read(4, ..., 4096)=10
+
